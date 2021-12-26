@@ -168,6 +168,69 @@ describe('API Routes /attachments/', function() {
     	});
 	});
 
+	it('should POST a file on api/upload/attachment/:id and convert it to mp3', function(done) {
+
+		postInterview( (interview) => {
+    		var data = {
+				text: "attachment text",
+				tags: ['test1' , 'test2'],
+				interview: interview._id
+			}
+			//create attachment
+			request(BASE_URL).post('api/attachments/').send(data).expect(200).end( (err, res) => {
+				if (err) throw err;
+
+				var attachment = res.body;
+
+				postFile(attachment._id, TEST_AUDIO_FILE, (attachment) => {
+
+					//check if file exists
+					fs.access(attachment.file.url, fs.F_OK, (err) => {
+						if (err) throw err;
+						assert.equal(attachment.file.type, "audio/mp3");
+						// console.log(attachment.file)
+						done();
+					});
+				});
+			});
+    	});
+	});
+
+	it('should POST an mp3 file on api/upload/attachment/:id', function(done) {
+
+		postInterview( (interview) => {
+    		var data = {
+				text: "attachment text",
+				tags: ['test1' , 'test2'],
+				interview: interview._id
+			}
+			
+			var TEST_AUDIO_FILE = {
+				path: "tests/files/audio3.mp3",
+				originalFilename: "audio3.mp3",
+				type: "audio/mp3"
+			}
+
+			//create attachment
+			request(BASE_URL).post('api/attachments/').send(data).expect(200).end( (err, res) => {
+				if (err) throw err;
+
+				var attachment = res.body;
+
+				postFile(attachment._id, TEST_AUDIO_FILE, (attachment) => {
+
+					//check if file exists
+					fs.access(attachment.file.url, fs.F_OK, (err) => {
+						if (err) throw err;
+						assert.equal(attachment.file.type, "audio/mp3");
+						// console.log(attachment.file)
+						done();
+					});
+				});
+			});
+    	});
+	});
+
 	it('should DELETE on api/attachments/:id with auth', function(done){
 
 		postInterview( (interview) => {

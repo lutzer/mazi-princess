@@ -108,7 +108,7 @@ class Attachment extends BaseModel {
                 return;
             }
 
-            var fileurl = Config.fileDir + this.data.interview + '/' + file.originalFilename;
+            var fileurl = Config.fileDir + this.data.interview + '/' + file.name;
 
             //copy image
             fs.move(file.path, fileurl, (err) => {
@@ -119,7 +119,7 @@ class Attachment extends BaseModel {
 
                 this.data.file = file;
                 this.data.file.url = fileurl
-                this.data.file.name = file.originalFilename;
+                this.data.file.name = file.name;
 
                 // save interview
                 resolve();

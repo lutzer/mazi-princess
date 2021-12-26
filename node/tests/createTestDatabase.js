@@ -204,7 +204,7 @@ describe('Create Test Database', function(){
 			return attachment.save();
 		}).then( () => {
 			var file = TEST_AUDIO_FILE;
-			file.originalFilename = 'test4.wav';
+			file.name = 'test4.wav';
 			return attachment.attachFile(file);
 		}).then( () => {
 			fs.access(attachment.data.file.url, fs.F_OK, (err) => {
