@@ -5,9 +5,8 @@ var _ = require('underscore');
 var multipart = require('connect-multiparty');
 var fse = require('fs-extra');
 var path = require('path');
-var { exec } = require('child_process');
-var { promisify } = require('util');
 var fs = require('fs');
+var { convertToMp3 } = require('./../utils/fileConverter');
 
 var appEvents = r_require('/utils/appEvents.js');
 var Interview = r_require('/models/interview');
@@ -21,26 +20,6 @@ var fileUploader = multipart({
     autoFiles: true
     //maxFilesSize: Config.maxUploadFileSize
 });
-
-const execCommand = promisify(exec)
-const deleteFile = promisify(fs.unlink)
-
-/* function converts a wav or ogg file to mp3 and return its path */
-const convertToMp3 = async function(filePath, extension = null) {
-    const fileData = path.parse(filePath)
-    extension = extension || fileData.ext
-    if (!_.includes(['.wav','.ogg','.webm','.m4a','.mp4','.aac','.mp3'], extension))
-        throw new Error("Extension not supported")
-
-    const newPath = fileData.dir + '/' + fileData.name + '_c.mp3'
-    await execCommand(`ffmpeg -f ${extension.substr(1)} -i ${filePath} -acodec libmp3lame -y ${newPath}`)
-    return newPath
-}
-
-function changeExtension(file, extension) {
-  const basename = path.basename(file, path.extname(file))
-  return path.join(path.dirname(file), basename + extension)
-}
 
 /*
  * POST /api/upload/attachment/:attachmentId
@@ -76,10 +55,7 @@ router.post('/attachment/:attachmentId', fileUploader, function(req,res){
     }).then(async () => {
         if (file.type.startsWith('audio/')) {
             //convert audio file
-            let newPath = await convertToMp3(file.path);
-            
-            // delete old file
-            await deleteFile(file.path);
+            let newPath = await convertToMp3(file.path, { delete: true });
 
             // setup file object
             file.path = newPath;

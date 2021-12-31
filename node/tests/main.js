@@ -35,8 +35,12 @@ require("./apiQuestionsTests.js");
 // socket tests
 require("./socketTests.js");
 
+// test file conversion
+require("./fileConvertTests.js");
+
 // add some test data
 require("./createTestDatabase.js");
+
 
 // import data
 // require("./importData.js");

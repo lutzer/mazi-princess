@@ -128,7 +128,7 @@ describe('Create Test Database', function(){
 			return attachment.save();
 		}).then( () => {
 			var file = TEST_AUDIO_FILE;
-			file.originalFilename = 'test2.wav';
+			file.name = 'test2.wav';
 			return attachment.attachFile(file);
 		}).then( () => {
 			fs.access(attachment.data.file.url, fs.F_OK, (err) => {
@@ -153,7 +153,7 @@ describe('Create Test Database', function(){
 			return attachment.save();
 		}).then( () => {
 			var file = TEST_AUDIO_FILE;
-			file.originalFilename = 'test3.wav';
+			file.name = 'test3.wav';
 			return attachment.attachFile(file);
 		}).then( () => {
 			fs.access(attachment.data.file.url, fs.F_OK, (err) => {
