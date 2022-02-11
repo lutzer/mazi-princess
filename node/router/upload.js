@@ -13,6 +13,8 @@ var Interview = r_require('/models/interview');
 var Attachment = r_require('/models/attachment');
 var Utils = r_require('/utils/utils');
 
+var mime = require('mime-types')
+
 var router = express.Router();
 
 var fileUploader = multipart({
@@ -36,6 +38,8 @@ router.post('/attachment/:attachmentId', fileUploader, function(req,res){
         if (!file) {
             return Promise.reject(new Error('No file submitted.'));
         }
+
+        console.log(file);
         
         //check file size
         if (file.size > Config.maxFileSize) {
@@ -45,10 +49,20 @@ router.post('/attachment/:attachmentId', fileUploader, function(req,res){
         }
 
         //check extension
-        if (!(_.contains(Config.allowedAttachmentFileTypes,file.type))) {
+        if (!(_.contains(Config.allowedAttachmentFileTypes, file.type.split(';')[0]))) {
             fse.remove(file.path);
             return Promise.reject(new Error('Only wav,mp3,jpg and pdf files are allowed for upload. File is '+file.type));
         }
+
+        //adjust extension if none given
+        if (!path.extname(file.path)) {
+            var ext = mime.extension(file.type.split(';')[0]);
+            ext = ext == "weba" ? "webm" : ext;
+            const newPath = file.path + '.' + ext;
+            fs.renameSync(file.path, newPath);
+            file.path = newPath
+        }
+        console.log(file);
 
         // delete old file
         return attachment.deleteFile();
@@ -104,7 +118,7 @@ router.post('/image/:interviewId', fileUploader, function(req,res){
         }
 
         //check extension
-        if (!(_.contains(Config.allowedImageFileTypes,file.type))) {
+        if (!(_.contains(Config.allowedImageFileTypes, file.type.split(';')[0]))) {
             fse.remove(file.path);
             return Promise.reject(new Error('Only jpg,gif and png images are allowed for upload. File is '+file.type));
         }

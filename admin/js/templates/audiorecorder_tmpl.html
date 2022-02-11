@@ -1,6 +1,17 @@
-
-<button id="recorder-recordButton">Record Audio</button>
-<button id="recorder-stopButton">Stop Audio</button>
-<audio id="recorder-audio-player" controls></audio>
-<button id="recorder-deleteButton">Delete</button>
-<button id="recorder-saveButton">Save</button>
+<% if (state != 'hidden') { %>
+  <label>Audio Recorder</label>
+  <div style="padding: 10px 0px;">
+  <% if (state == 'init') { %>
+    <button id="recorder-recordButton">START RECORDING</button>
+  <% } else if (state == 'recording') { %>
+    <p>Recordig Audio</p>
+    <button id="recorder-stopButton">STOP RECORDING</button>
+  <% } else { %>
+    <audio id="recorder-audio-player" controls></audio>
+    <p>
+      <button id="recorder-saveButton">UPLOAD RECORDING</button>
+      <button id="recorder-deleteButton">DELETE RECORDING</button>
+    </p>
+  <% } %>
+  </div>
+<% } %>

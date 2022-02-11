@@ -5,7 +5,7 @@ This directory contains the backend interface
 ## Setup
 
 * run `npm install` to install dependencies
-* install compass
+* install compass with `gem install compass`
 
 ## Build
 

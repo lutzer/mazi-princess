@@ -9,9 +9,10 @@
 
 import Marionette from 'marionette'
 import _ from 'underscore'
-import mime from 'mime-types'
+import mime from '../mimeTypes'
 
 import template from 'text!templates/audiorecorder_tmpl.html';
+import mimeTypes from '../mimeTypes';
 
 async function getMediaRecorder() {
   let stream = await navigator.mediaDevices.getUserMedia ({ audio: true })
@@ -20,6 +21,13 @@ async function getMediaRecorder() {
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+const RecordingStates = {
+  init : 'init',
+  recording: 'recording',
+  stopped: 'stopped',
+  hidden: 'hidden'
 }
 
 class AudioRecorderView extends Marionette.ItemView {
@@ -39,15 +47,28 @@ class AudioRecorderView extends Marionette.ItemView {
       }
     }
 
+    get templateHelpers() {
+		  return {
+		    state: this.state
+      }
+    }
+
     /* methods */
     initialize(options) {
       this.recorder = null;
       this.blob = null;
+      this.state = RecordingStates.init;
+
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia()) {
+        this.state = RecordingStates.hidden
+      }
     }
 
     async onRecordButtonClicked() {
       if (this.recorder)
         return;
+
+      this.state = RecordingStates.recording;
 
       this.recorder = await getMediaRecorder();
       this.recorder.start();
@@ -58,10 +79,15 @@ class AudioRecorderView extends Marionette.ItemView {
       }
 
       this.recorder.onstop = () => {
+        this.state = RecordingStates.stopped;
+        this.render()
+
         this.blob = new Blob(audioChunks, { 'type' : 'audio/ogg; codecs=opus' });
         const audioUrl = window.URL.createObjectURL(this.blob);
         this.$("#recorder-audio-player")[0].src = audioUrl;
       }
+
+      this.render()
     }
 
     onStopButtonClicked() {
@@ -73,10 +99,14 @@ class AudioRecorderView extends Marionette.ItemView {
       this.blob = null;
       this.recorder = null;
       this.$("#recorder-audio-player")[0].src = null;
+
+      this.state = RecordingStates.init;
+      this.render()
     }
 
     onSaveButtonClicked() {
-      var filename = `audio.${mime.extension(this.recorder.mimeType)}`;
+
+      var filename = `audiofile`;
       let file = new File([this.blob], filename, { type: this.recorder.mimeType });
       this.triggerMethod('saveRecording', file);
       this.recorder = null;
