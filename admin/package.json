@@ -11,6 +11,10 @@
     "watch": "babel --watch src --out-dir js --source-maps inline --copy-files",
     "cwatch": "compass watch",
     "build": "babel src --out-dir js --source-maps inline --copy-files; compass compile",
-    "compress" : "r.js"
+    "compress": "r.js"
+  },
+  "dependencies": {
+    "audio-recorder-polyfill": "^0.4.1",
+    "mime-types": "^2.1.34"
   }
 }

@@ -13,10 +13,11 @@ import _ from 'underscore';
 import Config from 'config';
 import AttachmentModel from 'models/attachment_model';
 import utils from 'utils';
+import AudioRecorderView from './audiorecorder_view';
 
 import template from 'text!templates/attachment_tmpl.html';
 
-class AttachmentView extends Marionette.ItemView {
+class AttachmentView extends Marionette.LayoutView {
 
 	/* properties */
    	get template() { return _.template(template) }
@@ -29,6 +30,19 @@ class AttachmentView extends Marionette.ItemView {
             isNew : this.model.isNew()
       }
     }
+
+    regions() { 
+        return {
+            audiorecorder : '#audio-recorder'
+        }
+    }
+
+    onRender() {
+        if (!this.model.isNew())
+            this.getRegion('audiorecorder').show( new AudioRecorderView() );
+    }
+
+   
 
     events() {
       return {
@@ -68,9 +82,30 @@ class AttachmentView extends Marionette.ItemView {
     }
 
     onFileInputChanged() {
-
         var uploadUrl = Config.web_service_url + 'upload/attachment/' + this.model.id;
-        utils.uploadFile(self.$('#input-upload-file'), uploadUrl, (error) => {
+
+        var data = new FormData()
+        data.append('file', self.$('#input-upload-file')[0].files[0])
+
+        console.log(data);
+
+        utils.uploadFile(data, uploadUrl, (error) => {
+            if (error)
+                alert("ERROR: " + error);
+            else
+                alert("File was successfully uploaded");
+                this.model.fetch();
+        });   
+    }
+
+    onChildviewSaveRecording(view, file) {
+        var uploadUrl = Config.web_service_url + 'upload/attachment/' + this.model.id;
+        
+        console.log(file);
+        var data = new FormData()
+        data.append('file', file)
+
+        utils.uploadFile(data, uploadUrl, (error) => {
             if (error)
                 alert("ERROR: " + error);
             else

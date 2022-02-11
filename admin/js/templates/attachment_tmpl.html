@@ -14,7 +14,7 @@
 	<input type="text" id="input-tags" value="<%= tags.join(' ') %>"/>
 </div>
 <div class="input-element">
-	<label>Text</label>
+	<label>Question</label>
 	<textarea id="input-text"><%= text %></textarea>
 </div>
 
@@ -28,6 +28,9 @@
 	<% } %>
 	<label for="input-upload-file" style="margin-bottom: 20px;"><span class="button">UPLOAD FILE</span></label>
 	<input type="file" name="file" id="input-upload-file" style="display:none">
+
+	<label>Audio Recorder</label>
+	<div id="audio-recorder"></div>
 </div>
 <% } %>
 

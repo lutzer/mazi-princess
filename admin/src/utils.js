@@ -19,23 +19,46 @@ export default {
 	   return ret.join("&");
 	},
 
-	uploadFile: function(file, url, callback) {
+	uploadFile: async function(fileData, url, callback) {
 
-        $.ajax({
+        console.log(fileData)
+
+        let res = await fetch(url, {
             method: 'POST',
-            url: url,
-            iframe: true,
-            files: file,
-            dataType: 'json',
-            error: (res) => {
-                callback(res.responseJSON.error);
-            },
-            success: (res) => {
-                if (_.has(res,'error'))
-                    callback(res.error);
-                else
-                    callback();
-            }
-        });
+            body: fileData
+        })
+        
+        if (!res.ok) {
+            let text = await res.text()
+            callback(text);
+        } else {
+            callback();
+        }
+        
+        // .then(res => {
+        //     console.log(res.body)
+        //     if (res.ok)
+        //         callback()
+        //     else
+        //         callback(res.statusText);
+        //     // else throw Error(`Server returned ${response.status}: ${response.statusText}`)
+        // });
+
+        // $.ajax({
+        //     method: 'POST',
+        //     url: url,
+        //     iframe: true,
+        //     files: file,
+        //     dataType: 'json',
+        //     error: (res) => {
+        //         callback(res.responseJSON.error);
+        //     },
+        //     success: (res) => {
+        //         if (_.has(res,'error'))
+        //             callback(res.error);
+        //         else
+        //             callback();
+        //     }
+        // });
     }
 }
