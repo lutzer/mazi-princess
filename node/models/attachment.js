@@ -3,7 +3,8 @@
 var _ = require('underscore')
 var uuid = require('node-uuid');
 var fsp = require('fs-promise');
-var fs = require('fs-extra');
+// var fs = require('fs-extra');
+var fs = require('fs');
 var async = require('async');
 
 var Utils = r_require('/utils/utils');
@@ -108,10 +109,16 @@ class Attachment extends BaseModel {
                 return;
             }
 
-            var fileurl = Config.fileDir + this.data.interview + '/' + file.name;
+            // create dir
+            var dir = Config.fileDir + this.data.interview;
+            if (!fs.existsSync(dir)){
+                fs.mkdirSync(dir);
+            }
+
+            var fileurl = dir + '/' + file.name;
 
             //copy image
-            fs.move(file.path, fileurl, (err) => {
+            fs.rename(file.path, fileurl, (err) => {
                 if (err) {
                     reject(err);
                     return;
@@ -136,7 +143,7 @@ class Attachment extends BaseModel {
         }
 
         return new Promise( (resolve, reject) => {
-            fs.remove(this.data.file.url, (err) => {
+            fs.unlink(this.data.file.url, (err) => {
                 if (err)
                     reject(err);
                 else {

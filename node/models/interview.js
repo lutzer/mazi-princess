@@ -2,7 +2,7 @@
 
 var _ = require('underscore')
 var uuid = require('node-uuid');
-var fs = require('fs-extra');
+var fs = require('fs');
 var async = require('async');
 
 var BaseModel = r_require('/models/baseModel');
@@ -70,10 +70,15 @@ class Interview extends BaseModel {
                 return;
             }
 
-            var fileurl = Config.fileDir + this.data._id + '/' + image.originalFilename;
+            var dir = Config.fileDir + this.data._id;
+            if (!fs.existsSync(dir)){
+                fs.mkdirSync(dir);
+            }
+
+            var fileurl = dir + '/' + image.originalFilename;
 
             //copy image
-            fs.move(image.path, fileurl, (err) => {
+            fs.rename(image.path, fileurl, (err) => {
                 if (err) {
                     reject(err);
                     return;
@@ -97,7 +102,7 @@ class Interview extends BaseModel {
         }
 
         return new Promise( (resolve, reject) => {
-            fs.remove(this.data.image.url, (err) => {
+            fs.unlink(this.data.image.url, (err) => {
                 if (err)
                     reject(err);
                 else {
