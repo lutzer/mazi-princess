@@ -9,10 +9,8 @@
 
 import Marionette from 'marionette'
 import _ from 'underscore'
-import mime from '../mimeTypes'
 
 import template from 'text!templates/audiorecorder_tmpl.html';
-import mimeTypes from '../mimeTypes';
 
 async function getMediaRecorder() {
   let stream = await navigator.mediaDevices.getUserMedia ({ audio: true })
@@ -82,7 +80,7 @@ class AudioRecorderView extends Marionette.ItemView {
         this.state = RecordingStates.stopped;
         this.render()
 
-        this.blob = new Blob(audioChunks, { 'type' : 'audio/ogg; codecs=opus' });
+        this.blob = new Blob(audioChunks);
         const audioUrl = window.URL.createObjectURL(this.blob);
         this.$("#recorder-audio-player")[0].src = audioUrl;
       }

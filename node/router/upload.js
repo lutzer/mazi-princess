@@ -38,8 +38,6 @@ router.post('/attachment/:attachmentId', fileUploader, function(req,res){
         if (!file) {
             return Promise.reject(new Error('No file submitted.'));
         }
-
-        console.log(file);
         
         //check file size
         if (file.size > Config.maxFileSize) {
