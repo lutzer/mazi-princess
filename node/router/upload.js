@@ -60,7 +60,6 @@ router.post('/attachment/:attachmentId', fileUploader, function(req,res){
             fs.renameSync(file.path, newPath);
             file.path = newPath
         }
-        console.log(file);
 
         // delete old file
         return attachment.deleteFile();

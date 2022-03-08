@@ -87,9 +87,12 @@ class InterviewView extends Marionette.LayoutView {
     }
 
     onFileInputChanged() {
-
         var uploadUrl = Config.web_service_url + 'upload/image/' + this.model.id;
-        utils.uploadFile(self.$('#input-upload-file'), uploadUrl, (error) => {
+
+        var data = new FormData();
+        data.append('file', self.$('#input-upload-file')[0].files[0]);
+
+        utils.uploadFile(data, uploadUrl, (error) => {
             if (error)
                 alert("ERROR: " + error);
             else
