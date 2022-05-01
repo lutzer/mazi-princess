@@ -2,7 +2,7 @@
   "name": "mazi-princess",
   "version": "0.0.1",
   "dependencies": {
-    "async": "^1.5.2",
+    "async": "^2.6.4",
     "body-parser": "^1.14.0",
     "connect-multiparty": "^2.0.0",
     "events": "^1.0.2",
