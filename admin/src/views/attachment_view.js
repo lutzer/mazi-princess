@@ -84,10 +84,8 @@ class AttachmentView extends Marionette.LayoutView {
     onFileInputChanged() {
         var uploadUrl = Config.web_service_url + 'upload/attachment/' + this.model.id;
 
-        var data = new FormData()
-        data.append('file', self.$('#input-upload-file')[0].files[0])
-
-        console.log(data);
+        var data = new FormData();
+        data.append('file', self.$('#input-upload-file')[0].files[0]);
 
         utils.uploadFile(data, uploadUrl, (error) => {
             if (error)
